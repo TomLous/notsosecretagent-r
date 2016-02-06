@@ -12,5 +12,5 @@ if(mongo.is.connected(mongo) == TRUE) {
   #mongo.count(mongo, coll)
   
   #mongo.find.all(mongo, coll)
-  tweets <- mongo.find.all(mongo, coll,  query='{"_type":"twitter"}',fields='{"interaction.content": 1, "language.tag":1, "classification.sentiment":1,  "_type":1, "_id":1}')
+  tweets <- mongo.find.all(mongo, coll,  query='{"_type":"twitter", "language": {"$exists": true}}',fields='{"interaction.content": 1, "language.tag":1, "classification.sentiment":1,  "_type":1, "_id":1}', data.frame=TRUE)
 }

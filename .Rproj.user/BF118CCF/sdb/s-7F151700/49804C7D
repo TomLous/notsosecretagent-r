@@ -1,0 +1,18 @@
+{
+    "contents" : "library(rmongodb)\nlibrary(RTextTools)\nlibrary(e1071)\n\nmongo <- mongo.create(\"178.62.232.68\")\n\nif(mongo.is.connected(mongo) == TRUE) {\n  db <- \"AIVD\"\n  coll <- \"AIVD.classified\"\n  #mongo.get.database.collections(mongo, db)\n  \n  #mongo.count(mongo, coll)\n  \n  #mongo.find.all(mongo, coll)\n  tweets <- mongo.find.all(mongo, coll,  query='{\"_type\":\"twitter\", \"language\": {\"$exists\": true}}',fields='{\"interaction.content\": 1, \"language.tag\":1, \"classification.sentiment\":1,  \"_type\":1, \"_id\":1}', data.frame=TRUE)\n}",
+    "created" : 1454795009550.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "656115715",
+    "id" : "49804C7D",
+    "lastKnownWriteTime" : 1454798217,
+    "path" : "~/Development/R/notsosecret/sentiment.R",
+    "project_path" : "sentiment.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
