@@ -1,8 +1,8 @@
 install.packages("devtools")
 install.packages("rmongodb")
-#install.packages("RTextTools")
+install.packages("RTextTools")
 install.packages("e1071")
-#install.packages("tm")
+install.packages("tm")
 install.packages("plyr")
 install.packages("magrittr")
 
