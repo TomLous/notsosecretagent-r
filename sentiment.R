@@ -58,7 +58,7 @@ mongo <- mongo.create("178.62.232.68")
   
   #predicted
   
-  saveRDS(classifier, "sentimentNaiveBayes.rds",compress=F)
+  saveRDS(classifier, paste0(path,"sentimentNaiveBayes.rds"),compress=F)
   
   
   accuracy <- recall_accuracy(mtweets_test$sentiment, predicted)
