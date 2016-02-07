@@ -1,12 +1,12 @@
 {
-    "contents" : "library(rmongodb)\nlibrary(RTextTools)\nlibrary(e1071)\n\nmongo <- mongo.create(\"178.62.232.68\")\n\nif(mongo.is.connected(mongo) == TRUE) {\n  db <- \"AIVD\"\n  coll <- \"AIVD.classified\"\n  #mongo.get.database.collections(mongo, db)\n  \n  #mongo.count(mongo, coll)\n  \n  #mongo.find.all(mongo, coll)\n  tweets <- mongo.find.all(mongo, coll,  query='{\"_type\":\"twitter\", \"language\": {\"$exists\": true}}',fields='{\"interaction.content\": 1, \"language.tag\":1, \"classification.sentiment\":1,  \"_type\":1, \"_id\":1}', data.frame=TRUE)\n}",
+    "contents" : "library(rmongodb)\nlibrary(RTextTools)\nlibrary(e1071)\nlibrary(tm)\nsource('utils.R')\n\nmongo <- mongo.create(\"178.62.232.68\")\n\n\nif(mongo.is.connected(mongo) == TRUE) {\n  db <- \"AIVD\"\n  coll <- \"AIVD.classified\"\n  #mongo.get.database.collections(mongo, db)\n  \n  #mongo.count(mongo, coll)\n  \n  #mongo.find.all(mongo, coll)\n  tweets <- mongo.find.all(mongo, coll,  query='{\"_type\":\"twitter\", \"language\": {\"$exists\": true}}',fields='{\"interaction.content\": 1, \"language.tag\":1, \"classification.sentiment\":1, \"_id\":0}', data.frame=TRUE)\n  tweets$langcode <- as.factor(tweets$tag)\n  \n  languageCounts <- sort(table(tweets$langcode), decreasing = TRUE)[0:10]\n  languageCounts <- languageCounts[languageCounts > 10]\n  filteredLanguages <- languages[languages$language_code %in% names(languageCounts),]\n  \n  \n  \n  #tweets$X_type <- as.factor(tweets$X_type)\n  tweets$sentiment <- as.factor(tweets$sentiment)\n  mtweets <- merge(tweets, filteredLanguages, by.x=c(\"tag\"), by.y=c(\"language_code\"))\n  mtweets$tag <- NULL\n  \n  \n}",
     "created" : 1454795009550.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "656115715",
+    "hash" : "291936786",
     "id" : "49804C7D",
-    "lastKnownWriteTime" : 1454798217,
+    "lastKnownWriteTime" : 1454803351,
     "path" : "~/Development/R/notsosecret/sentiment.R",
     "project_path" : "sentiment.R",
     "properties" : {
