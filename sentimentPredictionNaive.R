@@ -13,8 +13,14 @@ if (length(args)==0) {
   #text <- "dddd"
   #text <- "ok "
   #stop(0, call.=FALSE)
-} else if (length(args)==1) {
+} else if (length(args)>1) {
   text <- args[1]
+  
+  if (length(args)==2) {
+    path <- args[2]
+  }else{
+    path <- "./"
+  }
 }
 
 
@@ -23,8 +29,8 @@ mat <- create_matrix(text, "english", minDocFreq=1, removeStopwords=FALSE, remov
 
 matrix <- as.matrix(mat)
 
-model <- readRDS("sentimentNaiveBayes.rds")
-labels <- readRDS("sentimentLabels.rds")
+model <- readRDS(paste0(path,"sentimentNaiveBayes.rds"))
+labels <- readRDS(paste0(path,"sentimentLabels.rds"))
 
 
 predicted <- predict(model, matrix)

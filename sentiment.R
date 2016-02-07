@@ -3,7 +3,11 @@ suppressMessages(library(RTextTools))
 suppressMessages(library(e1071))
 #library(magrittr)
 
-script.dir <- dirname(sys.frame(1)$ofile)
+if (length(args)==1) {
+  path <- args[1]
+}else{
+  path <- "./"
+}
 
 source('utils.R')
 
