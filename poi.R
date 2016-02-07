@@ -35,6 +35,7 @@ mongo <- mongo.create("178.62.232.68")
   mtweets$tag <- NULL
   mtweets <- droplevels(mtweets)
   
+  
   mtweets_en <- mtweets #[mtweets$language=="english",]
   
   mat <- create_matrix(mtweets_en$content, "english", minDocFreq=1, removeStopwords=FALSE, removeNumbers=TRUE,  # we can also removeSparseTerms
