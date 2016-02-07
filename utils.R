@@ -38,4 +38,6 @@ normalize_arabic <- function(x) {
   return(text_temp)
 }
 
+
+
 languages <- read.csv("lang.csv")

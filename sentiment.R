@@ -17,7 +17,7 @@ mongo <- mongo.create("178.62.232.68")
   #mongo.count(mongo, coll)
   
   #mongo.find.all(mongo, coll)
-  tweets <- mongo.find.all(mongo, coll,  query='{"_type":"twitter", "language": {"$exists": true}}',fields='{"interaction.content": 1, "language.tag":1, "classification.allignment":1, "_id":0}', data.frame=TRUE)
+  tweets <- mongo.find.all(mongo, coll,  query='{"_type":"twitter", "language": {"$exists": true}}',fields='{"interaction.content": 1, "language.tag":1, "classification.sentiment":1, "_id":0}', data.frame=TRUE)
   tweets$langcode <- as.factor(tweets$tag)
   
   languageCounts <- sort(table(tweets$langcode), decreasing = TRUE)[0:10]
@@ -27,7 +27,7 @@ mongo <- mongo.create("178.62.232.68")
   
   
   #tweets$X_type <- as.factor(tweets$X_type)
-  tweets$allignment <- as.factor(tweets$allignment)
+  tweets$sentiment <- as.factor(tweets$sentiment)
   mtweets <- merge(tweets, filteredLanguages, by.x=c("tag"), by.y=c("language_code"))
   mtweets$tag <- NULL
   mtweets <- droplevels(mtweets)
@@ -62,9 +62,9 @@ mongo <- mongo.create("178.62.232.68")
   #)
   
   #mtweets_en <- rbind(pos_tweets, neg_tweets, test_tweets)
-  #colnames(mtweets_en) <- c("content","allignment")
+  #colnames(mtweets_en) <- c("content","sentiment")
   #mtweets_en <- as.data.frame(mtweets_en, stringsAsFactors=FALSE)
-  #mtweets_en$allignment <- as.factor(mtweets_en$allignment);
+  #mtweets_en$sentiment <- as.factor(mtweets_en$sentiment);
   
   #matrix <- as.matrix(create_matrix(mtweets[mtweets$language=="english",c("content")], "english", minDocFreq=1, maxDocFreq=Inf, 
   #                           minWordLength=3, maxWordLength=Inf, ngramLength=1, 
@@ -73,7 +73,7 @@ mongo <- mongo.create("178.62.232.68")
   
   
   
-  mat <- create_matrix(mtweets_en, "english", minDocFreq=1, removeStopwords=FALSE, removeNumbers=TRUE,  # we can also removeSparseTerms
+  mat <- create_matrix(mtweets_en$content, "english", minDocFreq=1, removeStopwords=FALSE, removeNumbers=TRUE,  # we can also removeSparseTerms
                        stemWords=FALSE, stripWhitespace=TRUE, toLower=TRUE)
   
   matrix <- as.matrix(mat)
@@ -92,31 +92,39 @@ mongo <- mongo.create("178.62.232.68")
   #train_id <- sample(num_tweets, sample_size)
   
   
-  classifier = naiveBayes(matrix_train, mtweets_train$allignment)
+  classifier = naiveBayes(matrix_train, mtweets_train$sentiment)
   predicted <- predict(classifier, matrix_test)
   
-  accuracy <- recall_accuracy(mtweets_test$allignment, predicted)
+  matrix_test
+  predicted
+  
+  saveRDS(classifier, "sentimentNaiveBayes.rds",compress=F)
+  
+  
+  accuracy <- recall_accuracy(mtweets_test$sentiment, predicted)
   
   accuracy
   
   
-  num_allignment <- as.numeric(mtweets_test$allignment)
+  num_sentiment <- as.numeric(mtweets_test$sentiment)
   
-  container = create_container(mat, as.numeric(mtweets_en$allignment), trainSize=1:57, testSize=58:76,virgin=FALSE)
+  container = create_container(mat, as.numeric(mtweets_en$sentiment), trainSize=1:sample_size, testSize=(sample_size+1):num_tweets,virgin=FALSE)
   
-  models = train_models(container, algorithms=c("MAXENT" , "SVM", "RF", "BAGGING", "TREE"))
+  #models = train_models(container, algorithms=c("MAXENT" , "SVM", "TREE"))
+  model = train_model(container, "SVM")
   
-  results = classify_models(container, models)
+  #results = classify_models(container, models)
+  results = classify_model(container, model)
   
-  table(num_allignment, results[,"FORESTS_LABEL"])
-  table(num_allignment, results[,"MAXENTROPY_LABEL"])
+  #table(num_sentiment, results[,"FORESTS_LABEL"])
+  #table(num_sentiment, results[,"MAXENTROPY_LABEL"])
   
   # recall accuracy
-  recall_accuracy(num_allignment, results[,"FORESTS_LABEL"])
-  recall_accuracy(num_allignment, results[,"MAXENTROPY_LABEL"])
-  recall_accuracy(num_allignment, results[,"TREE_LABEL"])
-  recall_accuracy(num_allignment, results[,"BAGGING_LABEL"])
-  recall_accuracy(num_allignment, results[,"SVM_LABEL"])
+  #recall_accuracy(num_sentiment, results[,"FORESTS_LABEL"])
+  #recall_accuracy(num_sentiment, results[,"MAXENTROPY_LABEL"])
+  #recall_accuracy(num_sentiment, results[,"TREE_LABEL"])
+  #recall_accuracy(num_sentiment, results[,"BAGGING_LABEL"])
+  recall_accuracy(num_sentiment, results[,"SVM_LABEL"])
   
   analytics = create_analytics(container, results)
   summary(analytics)
@@ -125,9 +133,17 @@ mongo <- mongo.create("178.62.232.68")
   
   N=4
   set.seed(2014)
-  cross_validate(container,N,"MAXENT")
-  cross_validate(container,N,"TREE")
+  #cross_validate(container,N,"MAXENT")
+  #cross_validate(container,N,"TREE")
   cross_validate(container,N,"SVM")
-  cross_validate(container,N,"RF")
+  #cross_validate(container,N,"RF")
+  
+  #saveRDS(models, "sentimentModels.rds",compress=F)
+  saveRDS(model, "sentimentModel.rds",compress=F)
+  saveRDS(mat, "sentimentMatrix.rds",compress=F)
+  saveRDS(levels(mtweets_test$sentiment), "sentimentLabels.rds",compress=F)
+  
+  
+  
   
 #}
