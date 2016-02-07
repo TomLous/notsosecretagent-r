@@ -1,6 +1,6 @@
 suppressMessages(library(rmongodb))
 suppressMessages(library(RTextTools))
-#library(plyr)
+suppressMessages(library(e1071))
 #library(magrittr)
 source('utils.R')
 
