@@ -5,7 +5,7 @@ suppressMessages(library(e1071))
 args = commandArgs(trailingOnly=TRUE)
 
 if (length(args)==0) {
-  text <- "glad happy relieved ok, nice great awesome ok, lets go"
+  #text <- "glad happy relieved ok, nice great awesome ok, lets go"
   #text <- "Hate isis kill muder death"
   #text <- "Israel violates the ceasefire by bombing in Gaza and in rafah \nkilling at least 3 in Rafah , Breaks 65 UN resolutions till now\n\n#ICC4Israel"
   #text <- "dddd"
