@@ -1,6 +1,8 @@
 suppressMessages(library(RTextTools))
 suppressMessages(library(e1071))
 
+script.dir <- dirname(sys.frame(1)$ofile)
+
   
 args = commandArgs(trailingOnly=TRUE)
 
